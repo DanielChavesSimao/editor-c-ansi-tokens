@@ -2,7 +2,8 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
-from luguimocode import LuguimoAFD
+from cansiAFD import CansiAFD
+from ctoken import CToken
 
 # Defining TextEditor Class
 class TextEditor:
@@ -69,35 +70,34 @@ class TextEditor:
 
         scrol_y = Scrollbar(self.root, orient=VERTICAL)
         self.txtarea = Text(self.root, yscrollcommand=scrol_y.set, font=(
-            "times new roman", 15, "bold"), state="normal", relief=GROOVE)
+            "times new roman", 15, "bold"), background='grey25', foreground='white', state="normal", relief=GROOVE)
         scrol_y.pack(side=RIGHT, fill=Y)
         scrol_y.config(command=self.txtarea.yview)
+        self.txtarea.bind("<KeyRelease>", self.checkCTokens)
         self.txtarea.pack(fill=BOTH, expand=1)
 
         self.shortcuts()
 
     def setTagsForTokens(self):
-        self.tags = [
-            'keyword',
-            'identifier',
-            'constant',
-            'string',
-            'special_symbol',
-            'operator'
-        ]
+        # self.txtarea.tag_remove('1.0',END)
+        # self.txtarea.tag_delete(self.txtarea.tag_names())
+        print(self.txtarea.tag_names())
+        for token in self.afd.tokens:
+            self.txtarea.tag_add(token.token, token.index1, token.index2)
+            self.txtarea.tag_configure(token.token, foreground=CToken.TOKEN_COLORS[token.tipo])
 
-    def setTagsInPositions(self,posicoes:list):
-        for pos in posicoes:
+    def checkCTokens(self, e=None):
+        if e:
             pass
-
-    def checkCTokens(self):
         texto = self.txtarea.get("1.0", END)
-        afd = LuguimoAFD(texto)
+        self.afd = CansiAFD(texto)
         # get tokens e posicoes
-        posicoes = afd.run()
+        self.afd.run()
+
+        print(self.afd.tokens)
         # setar as posicoes com as tags respectivas
-        self.setTagsInPositions(posicoes)
-        print(afd)
+        self.setTagsForTokens()
+        # print(self.afd)
 
     def settitle(self):
         if self.filename:
@@ -123,6 +123,7 @@ class TextEditor:
                 infile.close()
                 self.settitle()
                 self.status.set("Opened Successfully")
+                self.checkCTokens()
         except Exception as e:
             messagebox.showerror("Exception", e)
 
