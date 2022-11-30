@@ -1,4 +1,4 @@
 /teste-arithmetic-operators.c
 /teste-double.c
 /teste-float.c
-/__pycache__
+*__pycache__
