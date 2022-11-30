@@ -1,0 +1,59 @@
+{
+    "ID": {
+        "color": "cyan"
+    },
+    "STRING": {
+        "color": "darkorange"
+    },
+    "KEYWORD": {
+        "color": "darkgreen"
+    },
+    "NUMBER": {
+        "color": "cyan"
+    },
+    "CHAR": {
+        "color": "darkorange"
+    },
+    "BOO": {
+        "color": "darkblue"
+    },
+    "LPAR": {
+        "color": "deep pink"
+    },
+    "RPAR": {
+        "color": "deep pink"
+    },
+    "LCO": {
+        "color": "deep pink"
+    },
+    "RCO": {
+        "color": "deep pink"
+    },
+    "LCUR": {
+        "color": "deep pink"
+    },
+    "RCUR": {
+        "color": "deep pink"
+    },
+    "COMMA": {
+        "color": "white"
+    },
+    "ASTERISK": {
+        "color": "white"
+    },
+    "COMMENT": {
+        "color": "lightgrey"
+    },
+    "ASSIGN": {
+        "color": "white"
+    },
+    "END": {
+        "color": "white"
+    },
+    "OP": {
+        "color": "white"
+    },
+    "NEWLINE": {
+        "color": "white"
+    }
+}

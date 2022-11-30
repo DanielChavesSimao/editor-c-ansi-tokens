@@ -2,8 +2,8 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
-from cansiAFD import CansiAFD
-from ctoken import CToken
+from tokenizer_c_ansi import tokenize, Token
+import json
 
 # Defining TextEditor Class
 class TextEditor:
@@ -16,6 +16,7 @@ class TextEditor:
         self.filename = None
         self.title = StringVar()
         self.status = StringVar()
+        self.colorConfiguration = self.initialize_color_configuration()
 
         self.titlebar = Label(self.root, textvariable=self.title, font=(
             "times new roman", 15, "bold"), bd=2, relief=GROOVE)
@@ -57,10 +58,10 @@ class TextEditor:
         self.editmenu.add_separator()
         self.editmenu.add_command(
             label="Undo", accelerator="Ctrl+U", command=self.undo)
-        # TODO trocar isso para event listener ao pressionar tecla
         self.editmenu.add_separator()
         self.editmenu.add_command(
             label="Check C Tokens", command=self.checkCTokens)
+        self.editmenu.add_command(label="Update Color config", command=self.updateColorConfig)
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 
         self.helpmenu = Menu(self.menubar, font=(
@@ -78,26 +79,33 @@ class TextEditor:
 
         self.shortcuts()
 
-    def setTagsForTokens(self):
+    def get_color_configuration(self, type):
+        return self.colorConfiguration[type]["color"]
+
+    def initialize_color_configuration(self):
+        with open('token_colors.json') as f:
+            colorConfiguration = json.load(f)
+        
+        return colorConfiguration
+
+    def setTagForToken(self, token:Token):
         # self.txtarea.tag_remove('1.0',END)
         # self.txtarea.tag_delete(self.txtarea.tag_names())
-        print(self.txtarea.tag_names())
-        for token in self.afd.tokens:
-            self.txtarea.tag_add(token.token, token.index1, token.index2)
-            self.txtarea.tag_configure(token.token, foreground=CToken.TOKEN_COLORS[token.tipo])
+        # print(self.txtarea.tag_names())
+        self.txtarea.tag_add(token.type, f'{token.line_start}.{token.column_start}', f'{token.line_end}.{token.column_end}')
+        self.txtarea.tag_configure(token.type, foreground=self.get_color_configuration(token.type))
+
+    def updateColorConfig(self):
+        self.colorConfiguration = self.initialize_color_configuration()
+        self.checkCTokens()
 
     def checkCTokens(self, e=None):
         if e:
             pass
         texto = self.txtarea.get("1.0", END)
-        self.afd = CansiAFD(texto)
-        # get tokens e posicoes
-        self.afd.run()
-
-        print(self.afd.tokens)
-        # setar as posicoes com as tags respectivas
-        self.setTagsForTokens()
-        # print(self.afd)
+        for token in tokenize(texto):
+            print(token)
+            self.setTagForToken(token)
 
     def settitle(self):
         if self.filename:
