@@ -4,6 +4,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 from tokenizer_c_ansi import tokenize, Token
 import json
+import logging
 
 # Defining TextEditor Class
 
@@ -12,6 +13,7 @@ class TextEditor:
 
     # Defining Constructor
     def __init__(self, root: Tk):
+        logging.basicConfig(level=logging.DEBUG)
         self.root = root
         self.root.title("ChurrasText")
         self.root.geometry("1200x700+200+150")
@@ -117,9 +119,9 @@ class TextEditor:
             pass
         texto = self.txtarea.get("1.0", END)
         self.clean_all_tags()
-        print(f'{"tokens":^50}')
+        print('\n--Tokens update--')
         for token in tokenize(texto):
-            print(token)
+            logging.debug(token)
             self.setTagForToken(token)
 
     def settitle(self):
