@@ -6,6 +6,8 @@ from tokenizer_c_ansi import tokenize, Token
 import json
 
 # Defining TextEditor Class
+
+
 class TextEditor:
 
     # Defining Constructor
@@ -61,7 +63,8 @@ class TextEditor:
         self.editmenu.add_separator()
         self.editmenu.add_command(
             label="Check C Tokens", command=self.checkCTokens)
-        self.editmenu.add_command(label="Update Color config", command=self.updateColorConfig)
+        self.editmenu.add_command(
+            label="Update Color config", command=self.updateColorConfig)
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 
         self.helpmenu = Menu(self.menubar, font=(
@@ -78,31 +81,43 @@ class TextEditor:
         self.txtarea.pack(fill=BOTH, expand=1)
 
         self.shortcuts()
+        self.set_configs_for_tags()
 
     def get_color_configuration(self, type):
-        return self.colorConfiguration[type]["color"]
+        return self.colorConfiguration[type]["color"] if type in self.colorConfiguration else "white"
 
     def initialize_color_configuration(self):
         with open('token_colors.json') as f:
             colorConfiguration = json.load(f)
-        
+
         return colorConfiguration
 
-    def setTagForToken(self, token:Token):
+    def setTagForToken(self, token: Token):
         # self.txtarea.tag_remove('1.0',END)
         # self.txtarea.tag_delete(self.txtarea.tag_names())
         # print(self.txtarea.tag_names())
-        self.txtarea.tag_add(token.type, f'{token.line_start}.{token.column_start}', f'{token.line_end}.{token.column_end}')
-        self.txtarea.tag_configure(token.type, foreground=self.get_color_configuration(token.type))
+        self.txtarea.tag_add(
+            token.type, f'{token.line_start}.{token.column_start}', f'{token.line_end}.{token.column_end}')
+
+    def set_configs_for_tags(self):
+        for token in Token.available_types:
+            self.txtarea.tag_configure(
+                token, foreground=self.get_color_configuration(token))
 
     def updateColorConfig(self):
         self.colorConfiguration = self.initialize_color_configuration()
         self.checkCTokens()
 
+    def clean_all_tags(self):
+        self.txtarea.configure(foreground="white")
+        self.txtarea.tag_remove('1.0', END)
+
     def checkCTokens(self, e=None):
         if e:
             pass
         texto = self.txtarea.get("1.0", END)
+        self.clean_all_tags()
+        print(f'{"tokens":^50}')
         for token in tokenize(texto):
             print(token)
             self.setTagForToken(token)

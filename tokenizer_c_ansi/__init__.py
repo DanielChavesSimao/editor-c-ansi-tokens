@@ -11,6 +11,29 @@ class Token(NamedTuple):
     line_end: int
     column_start: int
     column_end: int
+    available_types = {
+        'KEYWORD',
+        'NUMBER',
+        'CHAR',
+        'STRING',
+        'BOO',
+        'LPAR',
+        'RPAR',
+        'LCO',
+        'RCO',
+        'LCUR',
+        'RCUR',
+        'COMMA',
+        'ASTERISK',
+        'COMMENT',
+        'ASSIGN',
+        'END',
+        'ID',
+        'OP',
+        'NEWLINE',
+        'SKIP',
+        'MISMATCH',
+    }
 
 
 def tokenize(code):
@@ -22,7 +45,7 @@ def tokenize(code):
         "signed", "static", "struct", "switch", "typedef",
         "union", "void", "volatile", "while"
     }
-    keywords_regex = '|'.join(keywords) 
+    keywords_regex = '|'.join(keywords)
     token_specification = [
         ('KEYWORD', keywords_regex),
         ('NUMBER', r'\d+(\.\d*)?'),  # Integer or decimal number
@@ -40,14 +63,15 @@ def tokenize(code):
         ('ASTERISK', r'\*'),  # pointer
         # ('TILDE', r'~'), # destructor
         # ('PERIOD', r'\.') # member accessor
-        ('COMMENT', r'//'),  # comentário
+        ('COMMENT', r'//.*'),  # comentário
         ('ASSIGN', r'='),  # Assignment operator
         ('END', r';'),  # Statement terminator
         ('ID', r'([A-Za-z_][\w_]*){1,31}'),  # Identifiers
         # Arithmetic, logic and relational operators
         ('OP', r'[+\-*/%]|[<>=!]=|&&|\|\|'),
         ('NEWLINE',  r'\n'),  # Line endings
-        ('SKIP',     r'[ \t]+|#.+'),  # Skip over spaces and tabs and preprocessor
+        # Skip over spaces and tabs and preprocessor
+        ('SKIP',     r'[ \t]+|#.+'),
         ('MISMATCH', r'.'),  # Any other character
     ]
     tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
