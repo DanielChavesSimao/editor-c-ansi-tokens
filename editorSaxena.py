@@ -6,12 +6,9 @@ from tokenizer_c_ansi import tokenize, Token
 import json
 import logging
 
-# Defining TextEditor Class
-
 
 class TextEditor:
 
-    # Defining Constructor
     def __init__(self, root: Tk):
         logging.basicConfig(level=logging.DEBUG)
         self.root = root
@@ -20,6 +17,7 @@ class TextEditor:
         self.filename = None
         self.title = StringVar()
         self.status = StringVar()
+        # Inicializar a configuração de cores
         self.colorConfiguration = self.initialize_color_configuration()
 
         self.titlebar = Label(self.root, textvariable=self.title, font=(
@@ -85,36 +83,53 @@ class TextEditor:
         self.shortcuts()
         self.set_configs_for_tags()
 
-    def get_color_configuration(self, type):
+    def get_color_configuration(self, type) -> str:
+        """
+        Retorna uma string com o valor da cor para o tipo do token type.
+        """
         return self.colorConfiguration[type]["color"] if type in self.colorConfiguration else "white"
 
-    def initialize_color_configuration(self):
+    def initialize_color_configuration(self) -> dict:
+        """
+        Abre o arquivo e retorna um dict {token_name_1: {color: color_value}, {token_name_2: {color: color_value}, ...}
+        """
         with open('token_colors.json') as f:
             colorConfiguration = json.load(f)
 
         return colorConfiguration
 
-    def setTagForToken(self, token: Token):
-        # self.txtarea.tag_remove('1.0',END)
-        # self.txtarea.tag_delete(self.txtarea.tag_names())
-        # print(self.txtarea.tag_names())
+    def setTagForToken(self, token: Token) -> None:
+        """
+        Adiciona a tag com o nome token.type em volta do token encontrado.
+        """
         self.txtarea.tag_add(
             token.type, f'{token.line_start}.{token.column_start}', f'{token.line_end}.{token.column_end}')
 
-    def set_configs_for_tags(self):
+    def set_configs_for_tags(self) -> None:
+        """
+        Configura as tags disponíveis na classe Token de acordo com as cores obtidas do arquivo.
+        """
         for token in Token.available_types:
             self.txtarea.tag_configure(
                 token, foreground=self.get_color_configuration(token))
 
-    def updateColorConfig(self):
+    def updateColorConfig(self) -> None:
+        """
+        Le o arquivo de cores novamente e faz a checagem de tokens
+        """
         self.colorConfiguration = self.initialize_color_configuration()
         self.checkCTokens()
 
-    def clean_all_tags(self):
+    def clean_all_tags(self) -> None:
+        """
+        Pinta as tags de branco
+        """
         self.txtarea.configure(foreground="white")
-        self.txtarea.tag_remove('1.0', END)
+        for tag in self.txtarea.tag_names():
+            self.txtarea.tag_remove(tag, '1.0', END)
+        # logging.debug(self.txtarea.dump('1.0',END))
 
-    def checkCTokens(self, e=None):
+    def checkCTokens(self, e=None) -> None:
         if e:
             pass
         texto = self.txtarea.get("1.0", END)
@@ -139,7 +154,7 @@ class TextEditor:
     def openfile(self, *args):
         try:
             self.filename = filedialog.askopenfilename(title="Select file", filetypes=(
-                ("All Files", "*.*"), ("Text Files", "*.txt"), ("Python Files", "*.py")))
+                ("All Files", "*.*"), ("Text Files", "*.txt"), ("C Files", "*.c")))
             if self.filename:
                 infile = open(self.filename, "r")
                 self.txtarea.delete("1.0", END)
