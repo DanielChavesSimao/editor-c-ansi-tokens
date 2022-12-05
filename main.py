@@ -1,4 +1,3 @@
-from os import link
 from tkinter import *
 from editorSaxena import TextEditor
 

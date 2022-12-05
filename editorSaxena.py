@@ -1,4 +1,3 @@
-# Importing Required libraries & Modules
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
@@ -20,20 +19,24 @@ class TextEditor:
         # Inicializar a configuração de cores
         self.colorConfiguration = self.initialize_color_configuration()
 
+        # Title bar
         self.titlebar = Label(self.root, textvariable=self.title, font=(
             "times new roman", 15, "bold"), bd=2, relief=GROOVE)
         self.titlebar.pack(side=TOP, fill=BOTH)
         self.settitle()
 
+        # Status bar
         self.statusbar = Label(self.root, textvariable=self.status, font=(
             "times new roman", 15, "bold"), bd=2, relief=GROOVE)
         self.statusbar.pack(side=BOTTOM, fill=BOTH)
         self.status.set("Welcome To Text Editor")
 
+        # Menu bar
         self.menubar = Menu(self.root, font=(
             "times new roman", 15, "bold"), activebackground="skyblue")
         self.root.config(menu=self.menubar)
 
+        # File menu
         self.filemenu = Menu(self.menubar, font=(
             "times new roman", 12, "bold"), activebackground="skyblue", tearoff=0)
         self.filemenu.add_command(
@@ -49,6 +52,7 @@ class TextEditor:
             label="Exit", accelerator="Ctrl+E", command=self.exit)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
 
+        # Edit Menu
         self.editmenu = Menu(self.menubar, font=(
             "times new roman", 12, "bold"), activebackground="skyblue", tearoff=0)
         self.editmenu.add_command(
@@ -67,20 +71,27 @@ class TextEditor:
             label="Update Color config", command=self.updateColorConfig)
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 
+        # Help menu
         self.helpmenu = Menu(self.menubar, font=(
             "times new roman", 12, "bold"), activebackground="skyblue", tearoff=0)
         self.helpmenu.add_command(label="About", command=self.infoabout)
         self.menubar.add_cascade(label="Help", menu=self.helpmenu)
 
+        # Vertical scroll bar
         scrol_y = Scrollbar(self.root, orient=VERTICAL)
+        
+        # Text Area
         self.txtarea = Text(self.root, yscrollcommand=scrol_y.set, font=(
             "times new roman", 15, "bold"), background='grey25', foreground='white', state="normal", relief=GROOVE)
         scrol_y.pack(side=RIGHT, fill=Y)
         scrol_y.config(command=self.txtarea.yview)
+        # Event binding for tokenization
         self.txtarea.bind("<KeyRelease>", self.checkCTokens)
         self.txtarea.pack(fill=BOTH, expand=1)
 
+        # Shortcuts setup
         self.shortcuts()
+        # Tags styles setup
         self.set_configs_for_tags()
 
     def get_color_configuration(self, type) -> str:
@@ -104,6 +115,7 @@ class TextEditor:
         """
         self.txtarea.tag_add(
             token.type, f'{token.line_start}.{token.column_start}', f'{token.line_end}.{token.column_end}')
+        
 
     def set_configs_for_tags(self) -> None:
         """
@@ -118,6 +130,7 @@ class TextEditor:
         Le o arquivo de cores novamente e faz a checagem de tokens
         """
         self.colorConfiguration = self.initialize_color_configuration()
+        self.set_configs_for_tags()
         self.checkCTokens()
 
     def clean_all_tags(self) -> None:

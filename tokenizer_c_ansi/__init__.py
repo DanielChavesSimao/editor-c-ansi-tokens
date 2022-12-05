@@ -36,7 +36,7 @@ class Token(NamedTuple):
     }
 
 
-def tokenize(code):
+def tokenize(code: str):
     keywords = {
         "auto", "break", "case", "char", "const", "continue",
         "default", "do", "double", "else", "enum", "extern",
@@ -49,7 +49,7 @@ def tokenize(code):
     token_specification = [
         ('KEYWORD', keywords_regex),
         ('NUMBER', r'\d+(\.\d*)?'),  # Integer or decimal number
-        ('CHAR', r"'.'"),  # Character
+        ('CHAR', r"'.*'"),  # Character
         ('STRING', r'".*"'),  # String
         ('BOO', r'true|false'),  # Logical constants
         ('LPAR', r'\('),  # Left parentheses
@@ -59,7 +59,7 @@ def tokenize(code):
         ('LCUR', r'\{'),  # Left curly bracket
         ('RCUR', r'\}'),  # Right curly bracket
         ('COMMA', r','),  # Comma
-        # ('HASH', r'#'),  # pre-processor
+        ('HASH', r'#.*'),  # pre-processor
         ('ASTERISK', r'\*'),  # pointer
         # ('TILDE', r'~'), # destructor
         # ('PERIOD', r'\.') # member accessor
@@ -71,7 +71,7 @@ def tokenize(code):
         ('OP', r'[+\-*/%]|[<>=!]=|&&|\|\|'),
         ('NEWLINE',  r'\n'),  # Line endings
         # Skip over spaces and tabs and preprocessor
-        ('SKIP',     r'[ \t]+|#.+'),
+        ('SKIP',     r'[ \t]+'),
         ('MISMATCH', r'.'),  # Any other character
     ]
     tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)
