@@ -17,6 +17,7 @@ class Token(NamedTuple):
         'CHAR',
         'STRING',
         'BOO',
+        'HASH',
         'LPAR',
         'RPAR',
         'LCO',

@@ -3,7 +3,10 @@
         "color": "cyan"
     },
     "STRING": {
-        "color": "darkorange"
+        "color": "#fca796"
+    },
+    "HASH": {
+        "color": "green"
     },
     "KEYWORD": {
         "color": "darkgreen"
